@@ -18,6 +18,7 @@ export class WorkshopPipelineStack extends cdk.Stack {
 
     const pipeline = new CodePipeline(this, 'Pipeline', {
       pipelineName: 'WorkshopPipeline',
+      crossAccountKeys: true,
       synth: new CodeBuildStep('SynthStep', {
         input: CodePipelineSource.codeCommit(repo, 'master'),
         installCommands: [
@@ -32,7 +33,12 @@ export class WorkshopPipelineStack extends cdk.Stack {
       )
     });
 
-    const deploy = new WorkshopPipelineStage(this, 'Deploy');
+    const deploy = new WorkshopPipelineStage(this, 'Deploy',{
+      env: {
+        account: "427829476435",
+        region: "us-east-1"
+      }
+    });
     const deployStage = pipeline.addStage(deploy);
 
     deployStage.addPost(
